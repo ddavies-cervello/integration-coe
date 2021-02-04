@@ -4,50 +4,86 @@ import { Bar } from "@reactchartjs/react-chart.js";
 // Styles
 import "bulma/css/bulma.min.css";
 import "@fortawesome/fontawesome-free/css/all.css";
+import useSWR from "swr";
 
-const data = {
-  labels: ["1", "2", "3", "4", "5", "6"],
-  datasets: [
-    {
-      label: "# of Red Votes",
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: "rgb(255, 99, 132)",
-    },
-    {
-      label: "# of Blue Votes",
-      data: [2, 3, 20, 5, 1, 4],
-      backgroundColor: "rgb(54, 162, 235)",
-    },
-    {
-      label: "# of Green Votes",
-      data: [3, 10, 13, 15, 22, 30],
-      backgroundColor: "rgb(75, 192, 192)",
-    },
-  ],
+type QueueMetrics = {
+  name: string;
+  queueId: number;
+  aveEventsInOutPerHour: number;
+  aveTimeInQueue: string;
+  logs: {
+    created: string;
+    eventId: number;
+    level: string;
+    message: string;
+  }[];
+  errors: {
+    time: string;
+    eventId: number;
+    errorCode: number;
+    errorLog: string;
+  }[];
 };
 
 const options = {
   scales: {
     yAxes: [
       {
-        stacked: true,
+        position: "left",
+        id: "y-axis-1",
+        ticks: {
+          beginAtZero: true,
+        },
+      },
+      {
+        position: "right",
+        id: "y-axis-2",
         ticks: {
           beginAtZero: true,
         },
       },
     ],
-    xAxes: [
-      {
-        stacked: true,
-      },
-    ],
   },
 };
+
+const fetcher = async (input: RequestInfo, init: RequestInit) =>
+  (await fetch(input, { ...init })).json();
+
+const stringToSeconds = (string: string) => {
+  const parts = string.split(":");
+  const hours = parseInt(parts[0]);
+  const min = parseInt(parts[1]);
+  const sec = parseInt(parts[2]);
+  return hours * 360 + min * 60 + sec;
+};
+
+const formatData = (data: QueueMetrics) => ({
+  labels: [data.name],
+  datasets: [
+    {
+      label: "Average Events In/Out per Hour",
+      data: [data.aveEventsInOutPerHour],
+      backgroundColor: "rgb(255, 99, 132)",
+      yAxisID: "y-axis-1",
+    },
+    {
+      label: "Average Time in Queue (seconds)",
+      data: [stringToSeconds(data.aveTimeInQueue)],
+      backgroundColor: "rgb(54, 162, 235)",
+      yAxisID: "y-axis-2",
+    },
+  ],
+});
 
 const App = () => {
   const [activeTab, setActiveTab] = useState<
     "metrics" | "data" | "errors" | "logs"
   >("metrics");
+  const { data, error } = useSWR<QueueMetrics>(
+    "https://app-event-management.herokuapp.com/queueMetrics",
+    fetcher
+  );
+
   return (
     <>
       <section className="hero is-primary">
@@ -85,7 +121,11 @@ const App = () => {
                   </select>
                 </div>
               </div>
-              <Bar data={data} options={options} type="bar" />
+              <Bar
+                data={data && formatData(data)}
+                options={options}
+                type="bar"
+              />
             </div>
           </main>
         </div>
