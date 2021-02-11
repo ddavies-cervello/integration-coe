@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Bar } from "@reactchartjs/react-chart.js";
 
 // Styles
-import "bulma/css/bulma.min.css";
+import "./styles.scss";
 import "@fortawesome/fontawesome-free/css/all.css";
 import useSWR from "swr";
 
@@ -113,20 +113,66 @@ const App = () => {
                 </li>
               </ul>
             </div>
-            <div className="field">
-              <div className="control">
-                <div className="select is-primary">
-                  <select>
-                    <option>Select Queue</option>
-                  </select>
+            {activeTab === "metrics" ? (
+              <div className="field">
+                <div className="control">
+                  <div className="select is-primary">
+                    <select>
+                      <option>Select Queue</option>
+                    </select>
+                  </div>
                 </div>
+                <Bar
+                  data={data && formatData(data)}
+                  options={options}
+                  type="bar"
+                />
               </div>
-              <Bar
-                data={data && formatData(data)}
-                options={options}
-                type="bar"
-              />
-            </div>
+            ) : activeTab === "data" ? (
+              <table className="table is-fullwidth">
+                <thead>
+                  <tr>
+                    <th>Queue</th>
+                    <th>Id</th>
+                    <th>Ave. Events In/Out per Hour</th>
+                    <th>Ave. Time in Queue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{data?.name}</td>
+                    <td>{data?.queueId}</td>
+                    <td>{data?.aveEventsInOutPerHour}</td>
+                    <td>{data?.aveTimeInQueue}</td>
+                  </tr>
+                </tbody>
+              </table>
+            ) : activeTab === "logs" ? (
+              <figure className="highlight has-text-white">
+                <pre>
+                  {data?.logs.map((log) => (
+                    <p>
+                      {log.created}: [{log.level}] EventId: {log.eventId} -{" "}
+                      {log.message}
+                    </p>
+                  ))}
+                </pre>
+              </figure>
+            ) : (
+              activeTab === "errors" && (
+                <figure className="highlight has-text-danger">
+                  <pre>
+                    {data?.errors.map((error) => (
+                      <p>
+                        {error.time}: EventId: {error.eventId} -{" "}
+                        {error.errorCode ? `${error.errorCode} ` : ""}
+                        {error.errorLog}
+                      </p>
+                    ))}
+                  </pre>
+                </figure>
+              )
+            )}
           </main>
         </div>
       </section>
