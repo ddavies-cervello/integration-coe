@@ -28,8 +28,7 @@ type AppProps = {
 const ITEMS_PER_PAGE = 10;
 
 export const getStaticProps: GetStaticProps<AppProps> = async () => {
-  const connectionString =
-    'postgres://twiybijzrhvymx:fc86e0e0d312d7d033a52f6d8fbbbca2ceab57b61044712838ab6f6cce97cd74@ec2-54-225-18-166.compute-1.amazonaws.com:5432/d2nbpuapbdkpmo';
+  const connectionString = process.env.POSTGRES_URL;
 
   const pool = new Pool({
     connectionString,
