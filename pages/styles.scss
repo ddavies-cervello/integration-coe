@@ -1,0 +1,29 @@
+@charset "utf-8";
+@import "~bulma/sass/utilities/initial-variables";
+$tabs-link-active-color: $cyan;
+@import "bulma";
+
+.highlight {
+  background-color: #1f2330;
+  border-radius: 6px;
+
+  pre {
+    background-color: transparent;
+    color: currentColor;
+    font-size: 1rem;
+    line-height: 1.375;
+    margin: 0 !important;
+    padding: 1.25rem 1.5rem;
+    white-space: pre;
+    word-break: break-word;
+  }
+}
+
+table {
+  position: relative;
+}
+
+th {
+  position: sticky;
+  top: 0;
+}
