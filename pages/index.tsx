@@ -1,19 +1,19 @@
-import React, { useState, useMemo } from "react";
-import Link from "next/link";
-import { Pool } from "pg";
-import { Line } from "react-chartjs-2";
-import dayjs from "dayjs";
-import faker from "faker";
+import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { Pool } from 'pg';
+import { Line } from 'react-chartjs-2';
+import dayjs from 'dayjs';
+import faker from 'faker';
 
 // Components
-import DataTable from "../components/DataTable";
+import DataTable from '../components/DataTable';
 
 // Styles
 
 // Types
-import type { QueueMetrics, QueueData } from "../types";
+import type { QueueMetrics, QueueData } from '../types';
 
-import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
+import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next';
 
 type AppProps = {
   data: QueueMetrics[];
@@ -29,7 +29,7 @@ const ITEMS_PER_PAGE = 10;
 
 export const getStaticProps: GetStaticProps<AppProps> = async () => {
   const connectionString =
-    "postgres://twiybijzrhvymx:fc86e0e0d312d7d033a52f6d8fbbbca2ceab57b61044712838ab6f6cce97cd74@ec2-54-225-18-166.compute-1.amazonaws.com:5432/d2nbpuapbdkpmo";
+    'postgres://twiybijzrhvymx:fc86e0e0d312d7d033a52f6d8fbbbca2ceab57b61044712838ab6f6cce97cd74@ec2-54-225-18-166.compute-1.amazonaws.com:5432/d2nbpuapbdkpmo';
 
   const pool = new Pool({
     connectionString,
@@ -39,7 +39,7 @@ export const getStaticProps: GetStaticProps<AppProps> = async () => {
   });
   const client = await pool.connect();
   const rawResults = await client.query<QueueData>(
-    "select * from queue_monitoring"
+    'select * from queue_monitoring',
   );
 
   const eventsPerHour = await client.query(`SELECT* FROM (SELECT distinct
@@ -59,7 +59,7 @@ export const getStaticProps: GetStaticProps<AppProps> = async () => {
   const data = rawResults.rows.map((row) => ({
     ...row,
     enqueue_time: row.enqueue_time.toISOString(),
-    dequeue_time: row.dequeue_time ? row.dequeue_time.toISOString() : "",
+    dequeue_time: row.dequeue_time ? row.dequeue_time.toISOString() : '',
   }));
 
   const paginatedDataObject: Record<number, QueueMetrics[]> = {};
@@ -111,8 +111,8 @@ const App: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   errors,
 }) => {
   const [activeTab, setActiveTab] = useState<
-    "metrics" | "data" | "errors" | "logs"
-  >("metrics");
+    'metrics' | 'data' | 'errors' | 'logs'
+  >('metrics');
 
   const [timespan, setTimespan] = useState({
     start: eventsPerHour[0].time,
@@ -127,7 +127,7 @@ const App: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           dayjs(item.time) <= dayjs(timespan.end)
         );
       }),
-    [eventsPerHour, timespan.end, timespan.start]
+    [eventsPerHour, timespan.end, timespan.start],
   );
 
   const avgTimeInQueue = useMemo(() => {
@@ -147,7 +147,7 @@ const App: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 new Date(curr.enqueue_time).getTime())
             );
           } else return acc;
-        }, 0) / data.filter((row) => row.dequeue_time !== "").length
+        }, 0) / data.filter((row) => row.dequeue_time !== '').length
     );
   }, [data, timespan.end, timespan.start]);
 
@@ -159,22 +159,22 @@ const App: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   }, [eventsPerHourFiltered]);
 
   const handleChangeTimespan: React.ChangeEventHandler<HTMLSelectElement> = (
-    e
+    e,
   ) => {
     switch (e.target.value) {
-      case "View All":
+      case 'View All':
         setTimespan({
           start: eventsPerHour[0].time,
           end: eventsPerHour[eventsPerHour.length - 1].time,
         });
         break;
-      case "Last Hour":
+      case 'Last Hour':
         setTimespan({
           start: eventsPerHour[eventsPerHour.length - 2].time,
           end: eventsPerHour[eventsPerHour.length - 1].time,
         });
         break;
-      case "Last 4 Hours":
+      case 'Last 4 Hours':
         setTimespan({
           start: eventsPerHour[eventsPerHour.length - 5].time,
           end: eventsPerHour[eventsPerHour.length - 1].time,
@@ -204,32 +204,32 @@ const App: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
             <div className="tabs is-medium is-centered is-boxed">
               <ul>
                 <li
-                  className={activeTab === "metrics" ? "is-active" : ""}
-                  onClick={() => setActiveTab("metrics")}
+                  className={activeTab === 'metrics' ? 'is-active' : ''}
+                  onClick={() => setActiveTab('metrics')}
                 >
                   <Link href="/#metrics" shallow>
                     Metrics
                   </Link>
                 </li>
                 <li
-                  className={activeTab === "data" ? "is-active" : ""}
-                  onClick={() => setActiveTab("data")}
+                  className={activeTab === 'data' ? 'is-active' : ''}
+                  onClick={() => setActiveTab('data')}
                 >
                   <Link href="/#data" shallow>
                     Data
                   </Link>
                 </li>
                 <li
-                  className={activeTab === "errors" ? "is-active" : ""}
-                  onClick={() => setActiveTab("errors")}
+                  className={activeTab === 'errors' ? 'is-active' : ''}
+                  onClick={() => setActiveTab('errors')}
                 >
                   <Link href="/#errors" shallow>
                     Errors
                   </Link>
                 </li>
                 <li
-                  className={activeTab === "logs" ? "is-active" : ""}
-                  onClick={() => setActiveTab("logs")}
+                  className={activeTab === 'logs' ? 'is-active' : ''}
+                  onClick={() => setActiveTab('logs')}
                 >
                   <Link href="/#logs" shallow>
                     Logs
@@ -237,7 +237,7 @@ const App: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 </li>
               </ul>
             </div>
-            {activeTab === "metrics" ? (
+            {activeTab === 'metrics' ? (
               <>
                 <div className="block">
                   <div className="select">
@@ -265,15 +265,15 @@ const App: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                         }}
                         data={{
                           labels: eventsPerHourFiltered.map((row: any) =>
-                            dayjs(row.time).format("MM/DD/YY h:mm A")
+                            dayjs(row.time).format('MM/DD/YY h:mm A'),
                           ),
                           datasets: [
                             {
-                              label: "Number of Events",
-                              backgroundColor: "rgb(255, 99, 132)",
-                              borderColor: "rgb(255, 99, 132)",
+                              label: 'Number of Events',
+                              backgroundColor: 'rgb(255, 99, 132)',
+                              borderColor: 'rgb(255, 99, 132)',
                               data: eventsPerHourFiltered.map(
-                                (row: any) => row.eventCount
+                                (row: any) => row.eventCount,
                               ),
                             },
                           ],
@@ -305,9 +305,9 @@ const App: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                   </div>
                 </div>
               </>
-            ) : activeTab === "data" && data ? (
+            ) : activeTab === 'data' && data ? (
               <DataTable paginatedData={paginatedData} pageCount={pageCount} />
-            ) : activeTab === "logs" ? (
+            ) : activeTab === 'logs' ? (
               <figure className="highlight has-text-white">
                 <pre>
                   {logs.map((log) => (
@@ -318,7 +318,7 @@ const App: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 </pre>
               </figure>
             ) : (
-              activeTab === "errors" && (
+              activeTab === 'errors' && (
                 <figure className="highlight has-text-danger">
                   <pre>
                     {errors.map((error) => (

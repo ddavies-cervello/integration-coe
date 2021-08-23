@@ -1,0 +1,33 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": ["prettier", "next"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "rules": {
+    "react/prop-types": "off",
+    "react/no-children-prop": "warn", //should be error
+    "react/no-unescaped-entities": "warn",
+    "react/display-name": "warn", // should be error
+    "no-useless-catch": "warn",
+    "prefer-const": "warn", // should be error
+    "no-case-declarations": "warn", // should be error
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/naming-convention": ["off"],
+    "@typescript-eslint/triple-slash-reference": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "import/no-cycle": ["warn"],
+    "import/no-absolute-path": ["warn"],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  }
+}
